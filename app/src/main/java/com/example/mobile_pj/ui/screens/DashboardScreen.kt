@@ -16,210 +16,264 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.mobile_pj.R
 
 
-@Preview(showBackground = true)
 @Composable
-fun DashboardScreen() {
-    Box(
+fun DashboardScreen(
+    onQAClick: () -> Unit,
+    onStatisticsClick: () -> Unit
+) {
+    Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFFFFFBF5)) // 화면 배경색 설정
+            .background(Color(0xFFF5FFF5))
             .padding(16.dp)
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            // 상단 제목
+        Text(
+            text = "Loop Learn",
+            style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
+            color = Color(0xFF6BAE75),
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
+        UserInfoCard()
+        Spacer(modifier = Modifier.height(24.dp))
+        ProgressAndGoalsCard()
+        Spacer(modifier = Modifier.height(24.dp))
+        ActionButtons(onQAClick = onQAClick, onStatisticsClick = onStatisticsClick)
+    }
+}
+
+@Composable
+fun UserInfoCard() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFFAF0)), // 연한 녹색 배경
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Loop Learn",
-                style = MaterialTheme.typography.displayLarge,
-                color = Color(0xFF8AAE92),
-                modifier = Modifier.padding(bottom = 24.dp)
+                text = "welcome: name",
+                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                color = Color(0xFF6BAE75)
             )
-
-            // 사용자 정보 카드
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(12.dp),
-                shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF5EC)),
-                elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text("welcome: name", style = MaterialTheme.typography.headlineSmall.copy(fontSize = 18.sp))
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text("Attendance: 12", style = MaterialTheme.typography.bodyLarge)
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text("today:", style = MaterialTheme.typography.bodyLarge)
-                        Spacer(modifier = Modifier.width(8.dp))
-                        TextField(
-                            value = "",
-                            onValueChange = {},
-                            colors = TextFieldDefaults.colors(
-                                unfocusedContainerColor = Color(0xFFFFF5F5),
-                                focusedContainerColor = Color(0xFFFFEDED),
-                                unfocusedTextColor = Color.Gray,
-                                focusedTextColor = Color.Black
-                            ),
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(8.dp))
-                                .background(Color(0xFFF5F5F5))
-                                .height(40.dp)
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Progression Rate 및 "오늘 목표" 섹션
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                // Progression Rate
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(180.dp) // 크기를 조금 늘림
-                        .clip(CircleShape)
-                        .background(Color(0xFFF2FFF5))
-                        .padding(16.dp)
-                ) {
-                    Canvas(modifier = Modifier.fillMaxSize()) {
-                        val sweepAngle = 360 * 0.7f // 진행률 70%로 예제 설정
-                        drawArc(
-                            color = Color(0xFF8AAE92),
-                            startAngle = -90f,
-                            sweepAngle = sweepAngle,
-                            useCenter = false,
-                            style = Stroke(width = 16.dp.toPx(), cap = StrokeCap.Round)
-                        )
-                    }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "User Icon",
-                            tint = Color(0xFF8AAE92),
-                            modifier = Modifier.size(60.dp)
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(
-                            text = "progression rate",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = Color(0xFF8AAE92)
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                // 오늘 목표 체크리스트
-                Column(
-                    modifier = Modifier
-                        .weight(1f) // 남은 공간 차지
-                        .clip(RoundedCornerShape(16.dp))
-                        .background(Color(0xFFF2FFF5))
-                        .padding(16.dp)
-                ) {
-                    Text(
-                        text = "오늘 목표",
-                        style = MaterialTheme.typography.headlineSmall.copy(fontSize = 20.sp),
-                        color = Color(0xFF8AAE92),
-                        modifier = Modifier.padding(bottom = 12.dp)
-                    )
-                    repeat(3) { index ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 6.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Checkbox(
-                                checked = index < 2,
-                                onCheckedChange = {},
-                                modifier = Modifier.size(24.dp),
-                                colors = CheckboxDefaults.colors(
-                                    checkmarkColor = Color(0xFF8AAE92),
-                                    uncheckedColor = Color.Gray
-                                )
-                            )
-                            Spacer(modifier = Modifier.width(12.dp))
-                            Text(
-                                text = "achievement ${index + 1}",
-                                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                                color = Color.Gray
-                            )
-                        }
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Q&A 버튼
-            Button(
-                onClick = { /* Q&A 기능 */ },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-                    .shadow(6.dp, RoundedCornerShape(16.dp))
-                    .clip(RoundedCornerShape(16.dp))
-                    .padding(horizontal = 8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8AAE92))
-            ) {
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = "Attendance: 12",
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                color = Color.Gray
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(
-                    "Q&A",
-                    color = Color.White,
-                    style = MaterialTheme.typography.headlineSmall.copy(fontSize = 18.sp)
+                    text = "today:",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                    color = Color.Gray
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                TextField(
+                    value = "",
+                    onValueChange = {},
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color(0xFFF0FFF0),
+                        unfocusedTextColor = Color.Gray,
+                        focusedTextColor = Color.Black
+                    ),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .height(40.dp)
                 )
             }
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // 하단 버튼 섹션
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
+@Composable
+fun ProgressAndGoalsCard() {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFFAF0)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            // Progression Rate
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .size(140.dp)
+                    .clip(CircleShape)
+                    .background(Color(0xFFE0F7FF))
+                    .padding(8.dp)
             ) {
-                Button(
-                    onClick = { /* 알림 기능 */ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp)
-                        .padding(horizontal = 8.dp)
-                        .shadow(6.dp, RoundedCornerShape(16.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8AAE92))
-                ) {
-                    Text("Notifications", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                Canvas(modifier = Modifier.fillMaxSize()) {
+                    val sweepAngle = 270f // 진행률 75%
+                    drawArc(
+                        color = Color(0xFF4A90E2),
+                        startAngle = -90f,
+                        sweepAngle = sweepAngle,
+                        useCenter = false,
+                        style = Stroke(width = 16.dp.toPx(), cap = StrokeCap.Round)
+                    )
                 }
-                Button(
-                    onClick = { /* 다른 기능 */ },
-                    modifier = Modifier
-                        .weight(1f)
-                        .height(60.dp)
-                        .padding(horizontal = 8.dp)
-                        .shadow(6.dp, RoundedCornerShape(16.dp)),
-                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF8AAE92))
-                ) {
-                    Text("Other Action", color = Color.White, style = MaterialTheme.typography.bodyLarge)
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "User Icon",
+                        tint = Color(0xFF4A90E2),
+                        modifier = Modifier.size(40.dp)
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "progression rate",
+                        style = MaterialTheme.typography.bodySmall.copy(fontSize = 12.sp),
+                        color = Color(0xFF4A90E2)
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.width(16.dp))
+
+            // 오늘 목표 체크리스트
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(Color(0xFFEFFAF0))
+                    .padding(12.dp)
+            ) {
+                Text(
+                    text = "오늘 목표",
+                    style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
+                    color = Color(0xFF6BAE75),
+                    modifier = Modifier.padding(bottom = 12.dp)
+                )
+                repeat(7) { index ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Checkbox(
+                            checked = index < 3,
+                            onCheckedChange = {},
+                            modifier = Modifier.size(20.dp),
+                            colors = CheckboxDefaults.colors(
+                                checkmarkColor = Color(0xFF6BAE75),
+                                uncheckedColor = Color.Gray
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = "achievement ${index + 1}",
+                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                            color = Color.Gray
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+@Composable
+fun ActionButtons(
+    onQAClick: () -> Unit,
+    onStatisticsClick: () -> Unit
+) {
+    Column {
+        Button(
+            onClick = onQAClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .clip(RoundedCornerShape(25.dp))
+                .padding(horizontal = 8.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))
+        ) {
+            Text(
+                "Q&A",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            Button(
+                onClick = { /* 알림 기능 */ },
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(25.dp)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.bell_icon),
+                    contentDescription = "Bell Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Notifications", color = Color.White, style = MaterialTheme.typography.bodySmall)
+            }
+            Button(
+                onClick = onStatisticsClick,
+                modifier = Modifier
+                    .weight(1f)
+                    .height(50.dp)
+                    .padding(horizontal = 8.dp)
+                    .clip(RoundedCornerShape(25.dp)),
+                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.chart_icon),
+                    contentDescription = "Chart Icon",
+                    tint = Color.White,
+                    modifier = Modifier.size(24.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text("Statistics", color = Color.White, style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewDashboardScreen() {
+    DashboardScreen(
+        onQAClick = { println("Navigate to QA") },
+        onStatisticsClick = { println("Navigate to Statistics") }
+    )
+}
+
 
 
 
