@@ -6,14 +6,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mobile_pj.ui.screens.DashboardScreen
-import com.example.mobile_pj.ui.screens.LoginScreen
+import com.example.mobile_pj.login.LoginScreen
 import com.example.mobile_pj.ui.screens.QAPage
 import com.example.mobile_pj.ui.screens.SignUpScreen
 import com.example.mobile_pj.ui.screens.StatisticsPage
 
 @Composable
 fun NavGraph(
-    navController: NavHostController = rememberNavController()
+    navController: NavHostController = rememberNavController(),
 ) {
     NavHost(
         navController = navController,
@@ -22,7 +22,8 @@ fun NavGraph(
         composable(Routes.LOGIN) { // 로그인 화면
             LoginScreen(
                 onSignUpClick = { navController.navigate(Routes.SIGNUP) },
-                onLoginClick = { navController.navigate(Routes.DASHBOARD) }
+                onLoginClick = { navController.navigate(Routes.DASHBOARD) },
+                onGoogleClick = {}
             )
         }
         composable(Routes.SIGNUP) { // 회원가입 화면

@@ -13,6 +13,10 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(onRegisterClick: () -> Unit) {
+    var email by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -28,67 +32,59 @@ fun SignUpScreen(onRegisterClick: () -> Unit) {
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Email 입력 필드
-        var email by remember { mutableStateOf("") }
         OutlinedTextField(
             value = email,
             onValueChange = { email = it },
             label = { Text("E-mail") },
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF8AAE92),
                 focusedBorderColor = Color(0xFF8AAE92),
                 unfocusedBorderColor = Color(0xFFC4C4C4),
-                focusedTextColor = Color(0xFF8AAE92)
             )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Username 입력 필드
-        var username by remember { mutableStateOf("") }
         OutlinedTextField(
             value = username,
             onValueChange = { username = it },
             label = { Text("User Name") },
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF8AAE92),
                 focusedBorderColor = Color(0xFF8AAE92),
                 unfocusedBorderColor = Color(0xFFC4C4C4),
-                focusedTextColor = Color(0xFF8AAE92)
             )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Password 입력 필드
-        var password by remember { mutableStateOf("") }
         OutlinedTextField(
             value = password,
             onValueChange = { password = it },
             label = { Text("Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF8AAE92),
                 focusedBorderColor = Color(0xFF8AAE92),
                 unfocusedBorderColor = Color(0xFFC4C4C4),
-                focusedTextColor = Color(0xFF8AAE92)
             )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Confirm Password 입력 필드
-        var confirmPassword by remember { mutableStateOf("") }
         OutlinedTextField(
             value = confirmPassword,
             onValueChange = { confirmPassword = it },
             label = { Text("Confirm Password") },
             modifier = Modifier.fillMaxWidth(),
             visualTransformation = PasswordVisualTransformation(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF8AAE92),
                 focusedBorderColor = Color(0xFF8AAE92),
                 unfocusedBorderColor = Color(0xFFC4C4C4),
-                focusedTextColor = Color(0xFF8AAE92)
             )
         )
 

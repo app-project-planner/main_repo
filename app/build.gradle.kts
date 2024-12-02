@@ -1,12 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 
 android {
     namespace = "com.example.mobile_pj"
-    compileSdk = 35 // 최신 compileSdk 버전 34로 변경 (35는 미리보기 버전일 수 있음)
+    compileSdk = 34 // 최신 compileSdk 버전 34로 변경 (35는 미리보기 버전일 수 있음)
 
     defaultConfig {
         applicationId = "com.example.mobile_pj"
@@ -66,6 +67,7 @@ dependencies {
 
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.7.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Compose Activity
     implementation("androidx.activity:activity-compose:1.8.0")
@@ -75,6 +77,12 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(platform(libs.firebase.bom))
     implementation(libs.play.services.auth)
+
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
 
     // 테스트 의존성
     testImplementation(libs.junit)
