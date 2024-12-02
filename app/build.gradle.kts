@@ -75,6 +75,8 @@ dependencies {
     // Google Play services
     implementation(libs.google.services)
     implementation(libs.firebase.auth)
+    implementation(platform("com.google.firebase:firebase-bom:33.6.0"))
+    implementation("com.google.firebase:firebase-auth-ktx")
     implementation(platform(libs.firebase.bom))
     implementation(libs.play.services.auth)
 

@@ -21,12 +21,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mobile_pj.R
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
 fun DashboardScreen(
     onQAClick: () -> Unit,
-    onStatisticsClick: () -> Unit
+    onStatisticsClick: () -> Unit,
+    onLogOutClick:()->Unit
 ) {
     Column(
         modifier = Modifier
@@ -34,12 +36,31 @@ fun DashboardScreen(
             .background(Color(0xFFF5FFF5))
             .padding(16.dp)
     ) {
-        Text(
-            text = "Loop Learn",
-            style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
-            color = Color(0xFF6BAE75),
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp), // Optional padding
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(
+                text = "Loop Learn",
+                style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
+                color = Color(0xFF6BAE75),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Button(
+                onClick = {
+                    FirebaseAuth.getInstance().signOut()
+                    onLogOutClick()},
+                modifier = Modifier.height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF8AAE92)
+                )
+            ) {
+                Text("Log out", color = Color.White)
+            }
+        }
+
         UserInfoCard()
         Spacer(modifier = Modifier.height(24.dp))
         ProgressAndGoalsCard()
@@ -270,7 +291,8 @@ fun ActionButtons(
 fun PreviewDashboardScreen() {
     DashboardScreen(
         onQAClick = { println("Navigate to QA") },
-        onStatisticsClick = { println("Navigate to Statistics") }
+        onStatisticsClick = { println("Navigate to Statistics")},
+        onLogOutClick = {println("Navigate to Login")}
     )
 }
 

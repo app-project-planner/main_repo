@@ -1,5 +1,6 @@
 package com.example.mobile_pj.login
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -21,14 +22,22 @@ import com.example.mobile_pj.R
 import com.example.mobile_pj.login.component.GoogleSignButton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoginScreen(
+    auth : FirebaseAuth,
     loginViewModel: LoginViewModel = viewModel(),
     onSignUpClick: () -> Unit,
-                onLoginClick: () -> Unit,
-                onGoogleClick: ()-> Unit) {
+    onLoginClick: () -> Unit,
+    onGoogleClick: ()-> Unit) {
+
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
@@ -37,12 +46,14 @@ fun LoginScreen(
             activityResult = it,
             onSuccess = {
                 Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
+                onGoogleClick()
             },
             onFailure = {
-                Toast.makeText(context, "$it", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "로그인이 실패하였습니다", Toast.LENGTH_SHORT).show()
             }
         )
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -58,12 +69,12 @@ fun LoginScreen(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Username 입력 필드
-        var username by remember { mutableStateOf("") }
+        // Email 입력 필드
+        var email by remember { mutableStateOf("") }
         OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("username") },
+            value = email,
+            onValueChange = { email = it },
+            label = { Text("email") },
             modifier = Modifier.fillMaxWidth(),
             colors = OutlinedTextFieldDefaults.colors(
                 focusedTextColor = Color(0xFF8AAE92),
@@ -93,7 +104,8 @@ fun LoginScreen(
 
         // Login 버튼
         Button(
-            onClick = { onLoginClick() },
+            onClick = {
+                signIn(auth, email, password, context, onLoginClick) },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -112,6 +124,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
 
         // 소셜 로그인 버튼 (Figma 아이콘 반영)
+
+
         Row(
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
@@ -135,7 +149,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(32.dp))
 
         // 회원가입 버튼
-        TextButton(onClick = { onSignUpClick() }) {
+        TextButton(onClick = { onSignUpClick()}) {
             Text("Sign up", color = Color(0xFF8AAE92))
         }
     }
@@ -145,25 +159,28 @@ fun LoginScreen(
 @Composable
 fun PreviewLoginScreen() {
     LoginScreen(
-        onSignUpClick = {}, // 기본값 설정
-        onLoginClick = {},   // 기본값 설정
+        auth= Firebase.auth,
+        onSignUpClick = { }, // 기본값 설정
+        onLoginClick = { },   // 기본값 설정
         onGoogleClick = {}
     )
 }
 
-@Composable
-fun ImageButton(
-    icon: Painter,
-    onClick: () -> Unit
-){
-    Button(
-        onClick = onClick,
-        content = {
-            Image(
-                painter = icon,
-                contentDescription = "Google",
-                modifier = Modifier.size(40.dp)
-            )
+
+fun signIn(
+    auth: FirebaseAuth,
+    email: String,
+    password: String,
+    context: android.content.Context,
+    onLoginSuccess: () -> Unit
+) {
+    auth.signInWithEmailAndPassword(email, password)
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                onLoginSuccess()
+            } else {
+                Toast.makeText(context, task.exception?.message ?: "Login failed", Toast.LENGTH_LONG).show()
+            }
         }
-    )
 }
+
