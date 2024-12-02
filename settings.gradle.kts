@@ -20,5 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "mobile_pj"
-include(":app")
- 
+include (":app")

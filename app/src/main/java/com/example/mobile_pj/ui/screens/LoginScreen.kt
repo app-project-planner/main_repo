@@ -1,5 +1,6 @@
 package com.example.mobile_pj.ui.screens
 
+import android.widget.ImageButton
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -7,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -15,7 +17,9 @@ import com.example.mobile_pj.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(onSignUpClick: () -> Unit, onLoginClick: () -> Unit) {
+fun LoginScreen(onSignUpClick: () -> Unit,
+                onLoginClick: () -> Unit,
+                onGoogleClick: ()-> Unit) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -38,10 +42,10 @@ fun LoginScreen(onSignUpClick: () -> Unit, onLoginClick: () -> Unit) {
             onValueChange = { username = it },
             label = { Text("username") },
             modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF8AAE92),
                 focusedBorderColor = Color(0xFF8AAE92),
                 unfocusedBorderColor = Color(0xFFC4C4C4),
-                focusedTextColor = Color(0xFF8AAE92)
             )
         )
 
@@ -90,31 +94,7 @@ fun LoginScreen(onSignUpClick: () -> Unit, onLoginClick: () -> Unit) {
             modifier = Modifier.fillMaxWidth()
         ) {
             // 소셜 로그인 아이콘 (예시)
-            Image(
-                painter = painterResource(id = R.drawable.facebook_icon),
-                contentDescription = "Facebook",
-                modifier = Modifier.size(40.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.kakao_icon),
-                contentDescription = "Kakao",
-                modifier = Modifier.size(40.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.naver_icon),
-                contentDescription = "Naver",
-                modifier = Modifier.size(40.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.line_icon),
-                contentDescription = "Line",
-                modifier = Modifier.size(40.dp)
-            )
-            Image(
-                painter = painterResource(id = R.drawable.google_icon),
-                contentDescription = "Google",
-                modifier = Modifier.size(40.dp)
-            )
+
         }
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -131,7 +111,24 @@ fun LoginScreen(onSignUpClick: () -> Unit, onLoginClick: () -> Unit) {
 fun PreviewLoginScreen() {
     LoginScreen(
         onSignUpClick = {}, // 기본값 설정
-        onLoginClick = {}   // 기본값 설정
+        onLoginClick = {},   // 기본값 설정
+        onGoogleClick = {}
     )
 }
 
+@Composable
+fun ImageButton(
+    icon: Painter,
+    onClick: () -> Unit
+){
+    Button(
+        onClick = onClick,
+        content = {
+            Image(
+                painter = icon,
+                contentDescription = "Google",
+                modifier = Modifier.size(40.dp)
+            )
+        }
+    )
+}

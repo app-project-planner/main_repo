@@ -70,6 +70,12 @@ dependencies {
     // Compose Activity
     implementation("androidx.activity:activity-compose:1.8.0")
 
+    // Google Play services
+    implementation(libs.google.services)
+    implementation(libs.firebase.auth)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.play.services.auth)
+
     // 테스트 의존성
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

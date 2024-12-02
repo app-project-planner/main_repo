@@ -20,7 +20,8 @@ fun NavGraph(
         composable("login") {
             LoginScreen(
                 onSignUpClick = { navController.navigate("signup") },
-                onLoginClick = { navController.navigate("dashboard") }
+                onLoginClick = { navController.navigate("dashboard") },
+                onGoogleClick = {}
             )
         }
         composable("signup") {
