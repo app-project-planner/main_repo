@@ -3,6 +3,7 @@ package com.example.mobile_pj.ui.screens
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -28,44 +29,58 @@ import com.google.firebase.auth.FirebaseAuth
 fun DashboardScreen(
     onQAClick: () -> Unit,
     onStatisticsClick: () -> Unit,
-    onLogOutClick:()->Unit
+    onLogOutClick: () -> Unit
 ) {
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5FFF5))
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp) // Spacing between items
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp), // Optional padding
-            horizontalArrangement = Arrangement.SpaceBetween
-        ){
-            Text(
-                text = "Loop Learn",
-                style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
-                color = Color(0xFF6BAE75),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Button(
-                onClick = {
-                    FirebaseAuth.getInstance().signOut()
-                    onLogOutClick()},
-                modifier = Modifier.height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF8AAE92)
-                )
+        // Header Section
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Log out", color = Color.White)
+                Text(
+                    text = "Loop Learn",
+                    style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
+                    color = Color(0xFF6BAE75),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Button(
+                    onClick = {
+                        FirebaseAuth.getInstance().signOut()
+                        onLogOutClick()
+                    },
+                    modifier = Modifier.height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF8AAE92)
+                    )
+                ) {
+                    Text("Log out", color = Color.White)
+                }
             }
         }
 
-        UserInfoCard()
-        Spacer(modifier = Modifier.height(24.dp))
-        ProgressAndGoalsCard()
-        Spacer(modifier = Modifier.height(24.dp))
-        ActionButtons(onQAClick = onQAClick, onStatisticsClick = onStatisticsClick)
+        // User Info Section
+        item {
+            UserInfoCard()
+        }
+
+        // Progress and Goals Section
+        item {
+            ProgressAndGoalsCard()
+        }
+
+        // Action Buttons Section
+        item {
+            ActionButtons(onQAClick = onQAClick, onStatisticsClick = onStatisticsClick)
+        }
     }
 }
 

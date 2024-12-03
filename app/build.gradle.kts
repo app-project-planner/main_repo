@@ -63,6 +63,7 @@ dependencies {
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
+    implementation(libs.firebase.firestore.ktx)
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     // Compose Navigation
