@@ -37,6 +37,7 @@ fun NavGraph(
         }
         composable(Routes.DASHBOARD) { // 대시보드 화면
             DashboardScreen(
+                viewModel = sharedViewModel, // ViewModel 전달
                 onQAClick = { navController.navigate(Routes.QA) },
                 onStatisticsClick = { navController.navigate(Routes.STATISTICS) }
             )
