@@ -74,4 +74,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //파이어베이스 의존성 추가
+    implementation("com.google.firebase:firebase-database:20.0.5")
+    implementation("com.google.firebase:firebase-auth:21.0.8")
+
 }
