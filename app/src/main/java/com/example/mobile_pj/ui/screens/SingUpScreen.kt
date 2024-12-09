@@ -11,7 +11,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.mobile_pj.login.signIn
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -102,7 +101,8 @@ fun SignUpScreen(
 
         // Sign Up 버튼
         Button(
-            onClick = { signUp(auth,email,password,context,onRegisterClick) },
+            onClick = { //signUp(auth,email,password,context,onRegisterClick)
+                },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
@@ -123,23 +123,23 @@ fun PreviewSignUpScreen() {
         auth = Firebase.auth,
         onRegisterClick = {})
 }
-fun signUp(
-    auth: FirebaseAuth,
-    email: String,
-    password: String,
-    context: android.content.Context,
-    onSignUpSuccess: () -> Unit
-) {
-    auth.createUserWithEmailAndPassword(email, password)
-        .addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                onSignUpSuccess()
-            } else {
-                if (!task.exception?.message.isNullOrEmpty()) {
-                    Toast.makeText(context, task.exception?.message, Toast.LENGTH_LONG).show()
-                } else {
-                    signIn(auth, email, password, context, onSignUpSuccess)
-                }
-            }
-        }
-}
+//fun signUp(
+//    auth: FirebaseAuth,
+//    email: String,
+//    password: String,
+//    context: android.content.Context,
+//    onSignUpSuccess: () -> Unit
+//) {
+//    auth.createUserWithEmailAndPassword(email, password)
+//        .addOnCompleteListener { task ->
+//            if (task.isSuccessful) {
+//                onSignUpSuccess()
+//            } else {
+//                if (!task.exception?.message.isNullOrEmpty()) {
+//                    Toast.makeText(context, task.exception?.message, Toast.LENGTH_LONG).show()
+//                } else {
+//                    signIn(auth, email, password, context, onSignUpSuccess)
+//                }
+//            }
+//        }
+//}

@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.example.mobile_pj.login.LoginViewModel
 import com.example.mobile_pj.navigation.NavGraph
 import com.example.mobile_pj.ui.theme.AppTheme
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         splashViewModel.checkLogin()
+        installSplashScreen().setKeepOnScreenCondition{ splashState }
         setContent {
             AppTheme {
                 Surface(color = MaterialTheme.colorScheme.background) {
