@@ -26,9 +26,6 @@ fun NavGraph(
     ) {
         composable(Routes.LOGIN) { // 로그인 화면
             LoginScreen(
-                auth = auth,
-                onSignUpClick = {navController.navigate(Routes.SIGNUP) },
-                onLoginClick = {navController.navigate(Routes.DASHBOARD) },
                 onGoogleClick = {navController.navigate(Routes.DASHBOARD)}
             )
         }
