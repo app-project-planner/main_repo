@@ -26,7 +26,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 @Composable
 fun LoginScreen(
     loginViewModel: LoginViewModel = viewModel(),
-    onGoogleClick: ()-> Unit) {
+    onLoginClick: ()-> Unit) {
 
     val context = LocalContext.current
     val launcher = rememberLauncherForActivityResult(
@@ -36,7 +36,7 @@ fun LoginScreen(
             activityResult = it,
             onSuccess = {
                 Toast.makeText(context, "로그인이 완료되었습니다.", Toast.LENGTH_SHORT).show()
-                onGoogleClick()
+                onLoginClick()
             },
             onFailure = {
                 Toast.makeText(context, "로그인이 실패하였습니다", Toast.LENGTH_SHORT).show()
@@ -92,7 +92,7 @@ fun LoginScreen(
 @Composable
 fun PreviewLoginScreen() {
     LoginScreen(
-        onGoogleClick = {}
+        onLoginClick = {}
     )
 }
 

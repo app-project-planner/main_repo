@@ -1,6 +1,7 @@
 package com.example.mobile_pj.data.models
 
-data class User(
+class User(
+    val userId: String = "",
     val userEmail: String = "",
     val password : String = ""
 )

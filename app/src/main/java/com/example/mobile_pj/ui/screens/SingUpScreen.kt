@@ -18,7 +18,6 @@ import com.google.firebase.ktx.Firebase
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SignUpScreen(
-    auth : FirebaseAuth,
     onRegisterClick: () -> Unit) {
     var email by remember { mutableStateOf("") }
     var username by remember { mutableStateOf("") }
@@ -120,7 +119,6 @@ fun SignUpScreen(
 @Composable
 fun PreviewSignUpScreen() {
     SignUpScreen(
-        auth = Firebase.auth,
         onRegisterClick = {})
 }
 //fun signUp(
