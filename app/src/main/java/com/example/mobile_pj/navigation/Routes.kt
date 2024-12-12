@@ -6,4 +6,5 @@ object Routes {
     const val DASHBOARD = "dashboard"
     const val QA = "qa"
     const val STATISTICS = "statistics"
+    const val PLAN_LIST = "plan_list"
 }

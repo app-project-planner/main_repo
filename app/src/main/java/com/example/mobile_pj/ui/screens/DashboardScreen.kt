@@ -13,9 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.mobile_pj.navigation.Routes
 import com.example.mobile_pj.viewmodel.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 
@@ -24,7 +28,8 @@ fun DashboardScreen(
     viewModel: SharedViewModel, // ViewModel 연결
     onLogOutClick:() -> Unit,
     onQAClick: () -> Unit,
-    onStatisticsClick: () -> Unit
+    onStatisticsClick: () -> Unit,
+    navController: NavHostController // NavController 추가
 ) {
     var newGoal by remember { mutableStateOf("") } // 입력 필드 상태 관리
 
@@ -82,7 +87,11 @@ fun DashboardScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         // 버튼 영역
-        ActionButtons(onQAClick = onQAClick, onStatisticsClick = onStatisticsClick)
+        ActionButtons(
+            navController = navController,
+            onQAClick = onQAClick,
+            onStatisticsClick = onStatisticsClick
+        )
     }
 }
 
@@ -186,6 +195,7 @@ fun TodayGoalsCard(
 
 @Composable
 fun ActionButtons(
+    navController: NavHostController,
     onQAClick: () -> Unit,
     onStatisticsClick: () -> Unit
 ) {
@@ -223,6 +233,25 @@ fun ActionButtons(
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
             )
         }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // 모든 목표 보기 버튼
+        Button(
+            onClick = { navController.navigate(Routes.PLAN_LIST) }, // 올바른 경로 사용
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(50.dp)
+                .clip(RoundedCornerShape(25.dp))
+                .padding(horizontal = 8.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))
+        ) {
+            Text(
+                "View All Goals",
+                color = Color.White,
+                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+            )
+        }
     }
 }
 
@@ -233,11 +262,15 @@ fun PreviewDashboardScreen() {
         addGoal("Study Math")
         addGoal("Complete Assignment")
     }
+
+    val dummyNavController = rememberNavController() // NavController 추가
+
     DashboardScreen(
         viewModel = dummyViewModel,
-        onLogOutClick = {println("Navigate to Login")},
+        onLogOutClick = { println("Navigate to Login") },
         onQAClick = { println("Navigate to QA") },
-        onStatisticsClick = { println("Navigate to Statistics") }
+        onStatisticsClick = { println("Navigate to Statistics") },
+        navController = dummyNavController // 가상 NavController 전달
     )
 }
 

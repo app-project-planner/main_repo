@@ -16,6 +16,7 @@ import com.example.mobile_pj.navigation.NavGraph
 import com.example.mobile_pj.navigation.Routes
 import com.example.mobile_pj.ui.theme.AppTheme
 import com.example.mobile_pj.viewmodel.SplashViewModel
+import com.google.firebase.FirebaseApp
 
 class MainActivity : ComponentActivity() {
     private val splashViewModel by viewModels<SplashViewModel>()
@@ -25,6 +26,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        FirebaseApp.initializeApp(this) // Firebase 초기화
         splashViewModel.checkLogin()
         installSplashScreen().setKeepOnScreenCondition{ splashState }
         setContent {

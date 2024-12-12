@@ -54,8 +54,8 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      */
     fun loadGoals() {
         repository.fetchPlans(userId) { plans ->
-            goals.clear() // 기존 로컬 상태 초기화
-            goals.addAll(plans) // Firebase에서 로드한 목표 리스트 추가
+            goals.clear()
+            goals.addAll(plans) // Firebase에서 가져온 데이터로 업데이트
         }
     }
 

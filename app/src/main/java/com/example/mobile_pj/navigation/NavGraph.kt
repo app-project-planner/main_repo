@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.mobile_pj.login.LoginScreen
 import com.example.mobile_pj.ui.screens.DashboardScreen
+import com.example.mobile_pj.ui.screens.PlanListScreen
 import com.example.mobile_pj.ui.screens.QAPage
 import com.example.mobile_pj.ui.screens.SignUpScreen
 import com.example.mobile_pj.ui.screens.StatisticsPage
@@ -35,12 +36,13 @@ fun NavGraph(
                 onRegisterClick = { navController.popBackStack(Routes.LOGIN, false) }
             )
         }
-        composable(Routes.DASHBOARD) { // 대시보드 화면
+        composable(Routes.DASHBOARD) {
             DashboardScreen(
-                viewModel = sharedViewModel, // ViewModel 전달
-                onLogOutClick = {navController.navigate(Routes.LOGIN) },
+                viewModel = sharedViewModel,
+                onLogOutClick = { navController.navigate(Routes.LOGIN) },
                 onQAClick = { navController.navigate(Routes.QA) },
-                onStatisticsClick = { navController.navigate(Routes.STATISTICS) }
+                onStatisticsClick = { navController.navigate(Routes.STATISTICS) },
+                navController = navController // NavController 전달
             )
         }
         composable(Routes.QA) { // Q&A 화면
@@ -49,5 +51,12 @@ fun NavGraph(
         composable(Routes.STATISTICS) { // 통계 화면
             StatisticsPage(sharedViewModel) // SharedViewModel을 전달
         }
+        composable(Routes.PLAN_LIST) {
+            PlanListScreen(
+                viewModel = sharedViewModel, // SharedViewModel 주입
+                onBackClick = { navController.navigateUp() } // 대시보드로 돌아가기
+            )
+        }
+
     }
 }
