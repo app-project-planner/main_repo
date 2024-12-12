@@ -134,11 +134,9 @@ fun TodayGoalsCard(
             .fillMaxWidth()
             .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFFAF0)), // 연한 녹색 배경
-        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFFAF0))
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // 제목
             Text(
                 text = "Today's Goals",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
@@ -146,7 +144,6 @@ fun TodayGoalsCard(
                 modifier = Modifier.padding(bottom = 12.dp)
             )
 
-            // 입력 필드 및 추가 버튼
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(bottom = 12.dp)
@@ -163,12 +160,19 @@ fun TodayGoalsCard(
                         focusedContainerColor = Color(0xFFF0FFF0)
                     )
                 )
-                Button(onClick = onAddGoal, colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))) {
+                Button(
+                    onClick = {
+                        if (newGoal.isNotBlank()) {
+                            viewModel.addGoal(newGoal) // Firebase에 저장
+                            onAddGoal() // UI 업데이트
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))
+                ) {
                     Text("Add", color = Color.White)
                 }
             }
 
-            // 목표 리스트
             LazyColumn {
                 items(viewModel.goals) { goal ->
                     Row(
