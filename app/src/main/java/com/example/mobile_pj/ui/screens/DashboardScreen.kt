@@ -33,67 +33,81 @@ fun DashboardScreen(
 ) {
     var newGoal by remember { mutableStateOf("") } // 입력 필드 상태 관리
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5FFF5))
-            .padding(16.dp)
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        // 제목
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                text = "Loop Learn",
-                style = MaterialTheme.typography.displayLarge,
-                color = Color(0xFF6BAE75),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Button(
-                onClick = {
-                    FirebaseAuth.getInstance().signOut()
-                    onLogOutClick()
-                },
-                modifier = Modifier.height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF8AAE92)
-                )
+        item{
+            // 제목
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "Log out",
-                    style = MaterialTheme.typography.displayMedium,
-                    color = Color.White)
+                    text = "Loop Learn",
+                    style = MaterialTheme.typography.displayLarge,
+                    color = Color(0xFF6BAE75),
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+                Button(
+                    onClick = {
+                        FirebaseAuth.getInstance().signOut()
+                        onLogOutClick()
+                    },
+                    modifier = Modifier.height(50.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF8AAE92)
+                    )
+                ) {
+                    Text(
+                        text = "Log out",
+                        style = MaterialTheme.typography.displayMedium,
+                        color = Color.White)
+                }
             }
         }
 
-        // 사용자 정보 카드
-        UserInfoCard()
+        item{
+            // 사용자 정보 카드
+            UserInfoCard()
+        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        item{
+            Spacer(modifier = Modifier.height(24.dp))
+        }
 
-        // 오늘 목표 추가 및 리스트
-        TodayGoalsCard(
-            viewModel = viewModel,
-            newGoal = newGoal,
-            onNewGoalChange = { newGoal = it },
-            onAddGoal = {
-                if (newGoal.isNotBlank()) {
-                    newGoal = "" // 입력 필드 초기화
+        item{
+            // 오늘 목표 추가 및 리스트
+            TodayGoalsCard(
+                viewModel = viewModel,
+                newGoal = newGoal,
+                onNewGoalChange = { newGoal = it },
+                onAddGoal = {
+                    if (newGoal.isNotBlank()) {
+                        newGoal = "" // 입력 필드 초기화
+                    }
                 }
-            }
-        )
+            )
+        }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        item{
+            Spacer(modifier = Modifier.height(24.dp))
 
-        // 버튼 영역
-        ActionButtons(
-            navController = navController,
-            onQAClick = onQAClick,
-            onStatisticsClick = onStatisticsClick
-        )
+        }
+        item{
+            // 버튼 영역
+            ActionButtons(
+                navController = navController,
+                onQAClick = onQAClick,
+                onStatisticsClick = onStatisticsClick
+            )
+        }
+
     }
 }
 
