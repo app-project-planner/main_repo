@@ -39,14 +39,21 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      * @param goal 삭제할 목표 내용
      */
     fun removeGoal(goal: String) {
-        // Firebase에 저장된 ID를 찾기 위해 goals 리스트에서 목표 내용 검색
-        val planIndex = goals.indexOf(goal)
-        if (planIndex != -1) {
-            repository.deletePlan(userId, planIndex.toString()) { success ->
-                if (success) goals.remove(goal) // Firebase 삭제 성공 시 로컬 상태 업데이트
+        // Firebase에 저장된 goal을 찾아 해당 planId를 사용
+        repository.fetchPlans(userId) { plans ->
+            // plans에서 해당 goal과 매칭되는 planId 찾기
+            val planId = plans.keys.find { plans[it] == goal }
+            if (planId != null) {
+                // planId를 기반으로 Firebase에서 삭제
+                repository.deletePlan(userId, planId) { success ->
+                    if (success) {
+                        goals.remove(goal) // 로컬 상태에서 goal 제거
+                    }
+                }
             }
         }
     }
+
 
     /**
      * 오늘 목표 로드
@@ -54,10 +61,11 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      */
     fun loadGoals() {
         repository.fetchPlans(userId) { plans ->
-            goals.clear()
-            goals.addAll(plans) // Firebase에서 가져온 데이터로 업데이트
+            goals.clear() // 기존 목표 초기화
+            goals.addAll(plans.values) // Firebase에서 가져온 goal만 추가
         }
     }
+
 
     /**
      * ChatGPT를 통한 질문 처리 (AI 학습 지원 기능)

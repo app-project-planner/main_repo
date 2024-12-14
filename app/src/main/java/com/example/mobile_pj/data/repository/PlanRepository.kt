@@ -1,5 +1,6 @@
 package com.example.mobile_pj.repository
 
+import android.util.Log
 import com.google.firebase.database.FirebaseDatabase
 
 /**
@@ -38,9 +39,15 @@ class PlanRepository {
         databaseReference.child("users").child(userId).child("plans").child(planId)
             .removeValue()
             .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d("FirebaseDelete", "Successfully deleted plan with ID: $planId")
+                } else {
+                    Log.e("FirebaseDelete", "Failed to delete plan with ID: $planId")
+                }
                 onComplete(task.isSuccessful) // 삭제 성공 여부 반환
             }
     }
+
 
     /**
      * 목표 조회
@@ -48,13 +55,18 @@ class PlanRepository {
      * @param userId 사용자 ID
      * @param onPlansFetched 목표 리스트 콜백
      */
-    fun fetchPlans(userId: String, onPlansFetched: (List<String>) -> Unit) {
+    fun fetchPlans(userId: String, onPlansFetched: (Map<String, String>) -> Unit) {
         databaseReference.child("users").child(userId).child("plans")
             .get()
             .addOnSuccessListener { snapshot ->
-                // Firebase에서 가져온 데이터(snapshot)를 목표 리스트로 변환
-                val plans = snapshot.children.mapNotNull { it.child("content").value as? String }
-                onPlansFetched(plans) // 목표 리스트 반환
+                // Firebase 데이터에서 planId와 goal(content)를 매핑
+                val plans = snapshot.children.associate { it.key!! to (it.child("content").value as? String ?: "") }
+                Log.d("FirebaseFetch", "Fetched plans: $plans")
+                onPlansFetched(plans)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FirebaseFetch", "Failed to fetch plans: ${exception.message}")
             }
     }
+
 }
