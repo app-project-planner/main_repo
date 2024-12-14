@@ -39,14 +39,21 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      * @param goal 삭제할 목표 내용
      */
     fun removeGoal(goal: String) {
-        // Firebase에 저장된 ID를 찾기 위해 goals 리스트에서 목표 내용 검색
-        val planIndex = goals.indexOf(goal)
-        if (planIndex != -1) {
-            repository.deletePlan(userId, planIndex.toString()) { success ->
-                if (success) goals.remove(goal) // Firebase 삭제 성공 시 로컬 상태 업데이트
+        // Firebase에 저장된 goal을 찾아 해당 planId를 사용
+        repository.fetchPlans(userId) { plans ->
+            // plans에서 해당 goal과 매칭되는 planId 찾기
+            val planId = plans.keys.find { plans[it] == goal }
+            if (planId != null) {
+                // planId를 기반으로 Firebase에서 삭제
+                repository.deletePlan(userId, planId) { success ->
+                    if (success) {
+                        goals.remove(goal) // 로컬 상태에서 goal 제거
+                    }
+                }
             }
         }
     }
+
 
     /**
      * 오늘 목표 로드
@@ -54,10 +61,11 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      */
     fun loadGoals() {
         repository.fetchPlans(userId) { plans ->
-            goals.clear() // 기존 로컬 상태 초기화
-            goals.addAll(plans) // Firebase에서 로드한 목표 리스트 추가
+            goals.clear() // 기존 목표 초기화
+            goals.addAll(plans.values) // Firebase에서 가져온 goal만 추가
         }
     }
+
 
     /**
      * ChatGPT를 통한 질문 처리 (AI 학습 지원 기능)
@@ -65,38 +73,38 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      * @param onResponse API 응답 콜백
      */
     fun askAI(question: String, onResponse: (String) -> Unit) {
-        // TODO: ChatGPT API 호출 로직 추가
-        onResponse("더미 응답") // 현재는 더미 데이터로 반환
-    }
-
-    /**
-     * ChatGPT를 통한 문제 생성 처리
-     * @param request 문제 생성 요청 내용
-     * @param onGenerated 문제 리스트 콜백
-     */
-    fun generateProblems(request: String, onGenerated: (List<String>) -> Unit) {
-        // TODO: ChatGPT API 호출 로직 추가
-        onGenerated(listOf("문제 1", "문제 2", "문제 3")) // 현재는 더미 데이터로 반환
-    }
-
-    /**
-     * 학습률 업데이트
-     * @param correctAnswers 맞춘 문제 개수
-     * @param totalQuestions 총 문제 개수
-     */
-    fun updateLearningRate(correctAnswers: Int, totalQuestions: Int) {
-        if (totalQuestions > 0) {
-            learningRate.value = (correctAnswers / totalQuestions.toFloat() * 100).toInt()
+            // TODO: ChatGPT API 호출 로직 추가
+            onResponse("더미 응답") // 현재는 더미 데이터로 반환
         }
-    }
 
-    /**
-     * 성취율 업데이트
-     * @param checkedGoals 체크된 목표 개수
-     * @param totalGoals 총 목표 개수
-     */
-    fun updateAchievementRate(checkedGoals: Int, totalGoals: Int) {
-        if (totalGoals > 0) {
+            /**
+             * ChatGPT를 통한 문제 생성 처리
+             * @param request 문제 생성 요청 내용
+             * @param onGenerated 문제 리스트 콜백
+             */
+            fun generateProblems(request: String, onGenerated: (List<String>) -> Unit) {
+                // TODO: ChatGPT API 호출 로직 추가
+                onGenerated(listOf("문제 1", "문제 2", "문제 3")) // 현재는 더미 데이터로 반환
+            }
+
+            /**
+             * 학습률 업데이트
+             * @param correctAnswers 맞춘 문제 개수
+             * @param totalQuestions 총 문제 개수
+             */
+            fun updateLearningRate(correctAnswers: Int, totalQuestions: Int) {
+                if (totalQuestions > 0) {
+                    learningRate.value = (correctAnswers / totalQuestions.toFloat() * 100).toInt()
+                }
+            }
+
+            /**
+             * 성취율 업데이트
+             * @param checkedGoals 체크된 목표 개수
+             * @param totalGoals 총 목표 개수
+             */
+            fun updateAchievementRate(checkedGoals: Int, totalGoals: Int) {
+                if (totalGoals > 0) {
             achievementRate.value = (checkedGoals / totalGoals.toFloat() * 100).toInt()
         }
     }
