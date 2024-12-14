@@ -47,7 +47,6 @@ fun PlanListScreen(
         Text(
             text = "Your Goals",
             style = MaterialTheme.typography.displayLarge.copy(
-                fontSize = 28.sp, // 메인 화면과 동일한 크기
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary // MaterialTheme 색상 적용
             ),
@@ -138,7 +137,7 @@ fun PlanListScreen(
             Text(
                 text = "Back to Dashboard",
                 color = MaterialTheme.colorScheme.onPrimary, // 버튼 텍스트 색상
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+                style = MaterialTheme.typography.displayMedium
             )
         }
     }

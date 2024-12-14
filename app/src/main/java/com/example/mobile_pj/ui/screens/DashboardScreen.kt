@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +50,7 @@ fun DashboardScreen(
             Text(
                 text = "Loop Learn",
                 style = MaterialTheme.typography.displayLarge,
+                fontWeight = FontWeight.Bold,
                 color = Color(0xFF6BAE75),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
