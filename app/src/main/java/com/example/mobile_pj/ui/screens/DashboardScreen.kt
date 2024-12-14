@@ -78,7 +78,6 @@ fun DashboardScreen(
             onNewGoalChange = { newGoal = it },
             onAddGoal = {
                 if (newGoal.isNotBlank()) {
-                    viewModel.addGoal(newGoal)
                     newGoal = "" // 입력 필드 초기화
                 }
             }
