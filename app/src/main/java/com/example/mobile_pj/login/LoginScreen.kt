@@ -56,7 +56,7 @@ fun LoginScreen(
         Text(
             text = "Loop Learn",
             style = MaterialTheme.typography.displayLarge,
-            color = Color(0xFF8AAE92), // Figma의 색상 반영
+            color = Color(0xFF6BAE75),
             modifier = Modifier
                 .background(Color(0xCCFFF6A7))
                 .padding(5.dp),
@@ -67,6 +67,8 @@ fun LoginScreen(
                 .background(Color(0xCCFFF6A7))
                 .padding(5.dp),
             text = "학습 계획 관리",
+            style = MaterialTheme.typography.displayLarge,
+            color = Color(0xFF6BAE75),
             fontSize = 19.sp
         )
         Spacer(modifier = Modifier.weight(3f))
