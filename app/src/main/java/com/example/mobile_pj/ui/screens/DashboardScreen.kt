@@ -48,7 +48,7 @@ fun DashboardScreen(
         ) {
             Text(
                 text = "Loop Learn",
-                style = MaterialTheme.typography.displayLarge.copy(fontSize = 28.sp),
+                style = MaterialTheme.typography.displayLarge,
                 color = Color(0xFF6BAE75),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
@@ -62,7 +62,10 @@ fun DashboardScreen(
                     containerColor = Color(0xFF8AAE92)
                 )
             ) {
-                Text("Log out", color = Color.White)
+                Text(
+                    text = "Log out",
+                    style = MaterialTheme.typography.displayMedium,
+                    color = Color.White)
             }
         }
 
@@ -107,14 +110,14 @@ fun UserInfoCard() {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = "Welcome: User",
-                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 18.sp),
+                style = MaterialTheme.typography.displayMedium,
                 color = Color(0xFF6BAE75)
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = "Attendance: 12 days",
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                style = MaterialTheme.typography.displayMedium,
                 color = Color.Gray
             )
         }
@@ -138,7 +141,7 @@ fun TodayGoalsCard(
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = "Today's Goals",
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp),
+                style = MaterialTheme.typography.displayMedium,
                 color = Color(0xFF6BAE75),
                 modifier = Modifier.padding(bottom = 12.dp)
             )
@@ -168,7 +171,9 @@ fun TodayGoalsCard(
                     },
                     colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF6BAE75))
                 ) {
-                    Text("Add", color = Color.White)
+                    Text(text = "Add",
+                        style = MaterialTheme.typography.bodyLarge
+                        ,color = Color.White)
                 }
             }
 
@@ -182,7 +187,7 @@ fun TodayGoalsCard(
                     ) {
                         Text(
                             text = goal,
-                            style = MaterialTheme.typography.bodySmall.copy(fontSize = 14.sp),
+                            style = MaterialTheme.typography.bodyLarge,
                             color = Color.Gray,
                             modifier = Modifier.weight(1f)
                         )
@@ -215,7 +220,7 @@ fun ActionButtons(
             Text(
                 "Q&A",
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+                style = MaterialTheme.typography.displayMedium
             )
         }
 
@@ -233,7 +238,7 @@ fun ActionButtons(
             Text(
                 "Statistics",
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+                style = MaterialTheme.typography.displayMedium
             )
         }
 
@@ -252,7 +257,7 @@ fun ActionButtons(
             Text(
                 "View All Goals",
                 color = Color.White,
-                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 16.sp)
+                style = MaterialTheme.typography.displayMedium
             )
         }
     }

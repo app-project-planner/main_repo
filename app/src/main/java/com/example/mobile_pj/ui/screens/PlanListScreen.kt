@@ -74,8 +74,7 @@ fun PlanListScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = "No goals found. Add new goals!",
-                    style = MaterialTheme.typography.bodyMedium.copy(
-                        fontSize = 16.sp,
+                    style = MaterialTheme.typography.displayMedium.copy(
                         color = MaterialTheme.colorScheme.onSurface // 기본 텍스트 색상
                     )
                 )

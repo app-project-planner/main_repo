@@ -73,38 +73,38 @@ class SharedViewModel(private val repository: PlanRepository = PlanRepository())
      * @param onResponse API 응답 콜백
      */
     fun askAI(question: String, onResponse: (String) -> Unit) {
-        // TODO: ChatGPT API 호출 로직 추가
-        onResponse("더미 응답") // 현재는 더미 데이터로 반환
-    }
-
-    /**
-     * ChatGPT를 통한 문제 생성 처리
-     * @param request 문제 생성 요청 내용
-     * @param onGenerated 문제 리스트 콜백
-     */
-    fun generateProblems(request: String, onGenerated: (List<String>) -> Unit) {
-        // TODO: ChatGPT API 호출 로직 추가
-        onGenerated(listOf("문제 1", "문제 2", "문제 3")) // 현재는 더미 데이터로 반환
-    }
-
-    /**
-     * 학습률 업데이트
-     * @param correctAnswers 맞춘 문제 개수
-     * @param totalQuestions 총 문제 개수
-     */
-    fun updateLearningRate(correctAnswers: Int, totalQuestions: Int) {
-        if (totalQuestions > 0) {
-            learningRate.value = (correctAnswers / totalQuestions.toFloat() * 100).toInt()
+            // TODO: ChatGPT API 호출 로직 추가
+            onResponse("더미 응답") // 현재는 더미 데이터로 반환
         }
-    }
 
-    /**
-     * 성취율 업데이트
-     * @param checkedGoals 체크된 목표 개수
-     * @param totalGoals 총 목표 개수
-     */
-    fun updateAchievementRate(checkedGoals: Int, totalGoals: Int) {
-        if (totalGoals > 0) {
+            /**
+             * ChatGPT를 통한 문제 생성 처리
+             * @param request 문제 생성 요청 내용
+             * @param onGenerated 문제 리스트 콜백
+             */
+            fun generateProblems(request: String, onGenerated: (List<String>) -> Unit) {
+                // TODO: ChatGPT API 호출 로직 추가
+                onGenerated(listOf("문제 1", "문제 2", "문제 3")) // 현재는 더미 데이터로 반환
+            }
+
+            /**
+             * 학습률 업데이트
+             * @param correctAnswers 맞춘 문제 개수
+             * @param totalQuestions 총 문제 개수
+             */
+            fun updateLearningRate(correctAnswers: Int, totalQuestions: Int) {
+                if (totalQuestions > 0) {
+                    learningRate.value = (correctAnswers / totalQuestions.toFloat() * 100).toInt()
+                }
+            }
+
+            /**
+             * 성취율 업데이트
+             * @param checkedGoals 체크된 목표 개수
+             * @param totalGoals 총 목표 개수
+             */
+            fun updateAchievementRate(checkedGoals: Int, totalGoals: Int) {
+                if (totalGoals > 0) {
             achievementRate.value = (checkedGoals / totalGoals.toFloat() * 100).toInt()
         }
     }

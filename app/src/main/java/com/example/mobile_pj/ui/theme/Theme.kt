@@ -5,6 +5,36 @@ import androidx.compose.material3.Typography
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import com.example.mobile_pj.R
+
+// NanumPenScript FontFamily 정의
+val NanumPenScriptFontFamily = FontFamily(
+    Font(R.font.nanum_pen_script_regular, FontWeight.Normal) // res/font/nanum_pen_script_regular.ttf
+)
+
+val AppTypography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = NanumPenScriptFontFamily, // NanumPenScript 폰트 적용
+        fontWeight = FontWeight.Normal,
+        fontSize = 40.sp // 큰 제목
+    ),
+    displayMedium = TextStyle(
+        fontFamily = NanumPenScriptFontFamily, // NanumPenScript 폰트 적용
+        fontWeight = FontWeight.Normal,
+        fontSize = 24.sp // 중간 크기 제목
+    ),
+    bodyLarge = TextStyle(
+        fontFamily = NanumPenScriptFontFamily, // NanumPenScript 폰트 적용
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp // 본문 텍스트
+    )
+)
+
 
 // Light Theme Color Scheme
 private val LightColorScheme = lightColorScheme(
@@ -23,7 +53,7 @@ private val LightColorScheme = lightColorScheme(
 fun AppTheme(content: @Composable () -> Unit) {
     MaterialTheme(
         colorScheme = LightColorScheme,
-        typography = Typography(), // Material3 Typography 객체 사용
+        typography = AppTypography,
         content = content
     )
 }
