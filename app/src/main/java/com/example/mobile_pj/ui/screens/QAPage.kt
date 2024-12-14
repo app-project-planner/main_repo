@@ -28,8 +28,8 @@ fun QAPage(viewModel: SharedViewModel) {
     // 사용자 입력 상태 관리
     var userInput by remember { mutableStateOf("") }
 
-    // 질문-답변 기록 가져오기
-    val chatHistory = viewModel.goals // ViewModel의 goals를 사용하여 기록 관리
+    // 질문-답변 기록 관리
+    val chatHistory = remember { mutableStateListOf<Pair<String, String>>() } // Pair(질문, 답변)
 
     Box(
         modifier = Modifier
@@ -55,22 +55,42 @@ fun QAPage(viewModel: SharedViewModel) {
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                items(chatHistory) { message ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp),
-                        horizontalArrangement = if (chatHistory.indexOf(message) % 2 == 0) Arrangement.Start else Arrangement.End
-                    ) {
-                        Text(
-                            text = message,
-                            style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
-                            color = Color.Gray,
+                items(chatHistory) { (question, answer) ->
+                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                        // 질문 표시
+                        Row(
                             modifier = Modifier
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(Color.White)
-                                .padding(12.dp)
-                        )
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.Start
+                        ) {
+                            Text(
+                                text = "Q: $question",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                                color = Color.Gray,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color.White)
+                                    .padding(12.dp)
+                            )
+                        }
+                        // 답변 표시
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            Text(
+                                text = "A: $answer",
+                                style = MaterialTheme.typography.bodyLarge.copy(fontSize = 16.sp),
+                                color = Color.Gray,
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(16.dp))
+                                    .background(Color.White)
+                                    .padding(12.dp)
+                            )
+                        }
                     }
                 }
             }
@@ -102,8 +122,12 @@ fun QAPage(viewModel: SharedViewModel) {
                 Spacer(modifier = Modifier.width(8.dp))
                 IconButton(onClick = {
                     if (userInput.isNotBlank()) {
-                        // ViewModel에 새로운 질문 추가
-                        viewModel.addGoal(userInput)
+                        // AI 질문 처리 요청
+                        val question = userInput
+                        viewModel.askAI(question) { response ->
+                            // 응답을 기록에 추가
+                            chatHistory.add(question to response)
+                        }
                         userInput = "" // 입력 필드 초기화
                     }
                 }) {
@@ -117,17 +141,3 @@ fun QAPage(viewModel: SharedViewModel) {
         }
     }
 }
-
-/**
- * QAPage 미리보기: 더미 데이터를 사용하여 UI를 테스트
- */
-@Preview(showBackground = true)
-@Composable
-fun PreviewQAPage() {
-    val dummyViewModel = SharedViewModel().apply {
-        addGoal("Sample Q&A 1")
-        addGoal("Sample Q&A 2")
-    }
-    QAPage(viewModel = dummyViewModel)
-}
-
