@@ -64,6 +64,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation(libs.firebase.firestore.ktx)
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
     // Compose Navigation
