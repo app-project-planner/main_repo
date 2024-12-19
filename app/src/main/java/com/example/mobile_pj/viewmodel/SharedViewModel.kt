@@ -35,6 +35,10 @@ class SharedViewModel(
     //private val userId: String
         //get() = FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
 
+    // 생성된 문제 리스트와 상태
+    private var currentProblems = listOf<Pair<String, String>>() // 문제와 정답 리스트
+    private var isAwaitingAnswer = false // 채점 대기 상태
+
     // GenerativeModel 초기화
     private val generativeModel = GenerativeModel(
         modelName = "gemini-1.5-flash",
@@ -87,32 +91,41 @@ class SharedViewModel(
         questionHistory.add(question) // 질문 기록 저장
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // 프롬프트 생성
-                val prompt = if (question == "문제") {
-                    buildProblemPrompt()
-                } else {
-                    buildPrompt(question)
-                }
-                Log.d("SharedViewModel", "Generated problem prompt: $prompt")
-                // GenerativeModel을 사용하여 응답 받기
-                val response = generativeModel.generateContent(prompt)
-                Log.d("SharedViewModel", "AI response: ${response.text}") // AI 응답 로그 출력
-                println("AI 응답 내용: ${response.text}")
-                if (question == "문제") {
-                    val problems = parseProblemsWithAnswers(response.text ?: "") // Null-safe 처리
-                    withContext(Dispatchers.Main) {
-                        val problemsText = problems.joinToString("\n") { (question, answer) ->
-                            "\n문제: $question"
+                if (isAwaitingAnswer) {
+                    // 답변을 채점
+                    val userAnswers = listOf(question) // 단일 답변으로 처리
+                    checkAnswers(userAnswers, currentProblems) { correct, incorrect ->
+                        val total = correct + incorrect
+                        val resultMessage = "채점 결과: 맞은 개수 = $correct, 틀린 개수 = $incorrect"
+                        learningRate.value = if (total > 0) (correct * 100) / total else 0 // 학습률 업데이트
+
+                        // MainDispatcher로 결과 반환
+                        launch(Dispatchers.Main) {
+                            onResponse(resultMessage)
                         }
-                        onResponse("문제가 생성되었습니다: ${problems.size}개 생성$problemsText")
+                        isAwaitingAnswer = false
+                    }
+                } else if (question == "문제") {
+                    // 문제 생성
+                    val prompt = buildProblemPrompt()
+                    val response = generativeModel.generateContent(prompt)
+                    currentProblems = parseProblemsWithAnswers(response.text ?: "") // 문제 저장
+                    isAwaitingAnswer = true // 채점 대기 상태로 설정
+
+                    launch(Dispatchers.Main) {
+                        val problemsText = currentProblems.joinToString("\n") { (q, _) -> "문제: $q" }
+                        onResponse("문제가 생성되었습니다: ${currentProblems.size}개\n$problemsText")
                     }
                 } else {
-                    withContext(Dispatchers.Main) {
-                        onResponse(response.text ?: "No response received") // Null-safe 처리
+                    // 일반 질문 처리
+                    val prompt = buildPrompt(question)
+                    val response = generativeModel.generateContent(prompt)
+                    launch(Dispatchers.Main) {
+                        onResponse(response.text ?: "No response received")
                     }
                 }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
+                launch(Dispatchers.Main) {
                     onResponse("Error: ${e.message}")
                 }
             }
@@ -120,33 +133,7 @@ class SharedViewModel(
     }
 
 
-    /**
-     * 문제 생성 및 학습률 계산 로직
-     * @param onResponse API 응답 콜백
-     */
-    fun generateProblems(onResponse: (List<Pair<String, String>>) -> Unit) {
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                // 문제 생성용 프롬프트 작성
-                val prompt = buildProblemPrompt()
 
-                // GenerativeModel을 사용하여 문제 생성
-                val response = generativeModel.generateContent(prompt)
-
-
-                // Null-safe 처리 적용
-                val problems = parseProblemsWithAnswers(response.text ?: "")
-
-                withContext(Dispatchers.Main) {
-                    onResponse(problems)
-                }
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    onResponse(emptyList())
-                }
-            }
-        }
-    }
 
     /**
      * 문제 채점 및 학습률 업데이트
@@ -170,20 +157,20 @@ class SharedViewModel(
                         val (question, answer) = problem
 
                         val prompt = """
-                        ## 문제:
-                        $question
+                    ## 문제:
+                    $question
 
-                        ## 사용자의 답변:
-                        $userAnswer
+                    ## 사용자의 답변:
+                    $userAnswer
 
-                        ## 정답:
-                        $answer
+                    ## 정답:
+                    $answer
 
-                        ## 위 정보를 기반으로 사용자의 답변이 정답인지 확인하고 "맞음" 또는 "틀림"으로 응답해줘.
-                    """.trimIndent()
+                    ## 위 정보를 기반으로 사용자의 답변이 정답인지 확인하고 "맞음" 또는 "틀림"으로 응답해줘.
+                """.trimIndent()
 
                         val response = generativeModel.generateContent(prompt)
-                        val result = response.text?.trim() ?: "" // Null-safe 처리
+                        val result = response.text?.trim() ?: ""
 
                         if (result == "맞음") correct++ else incorrect++
                     }
@@ -192,21 +179,10 @@ class SharedViewModel(
                 incorrect += userAnswers.size - correct
             }
 
+            // 학습률 업데이트
             withContext(Dispatchers.Main) {
-                updateLearningRate(correct, correct + incorrect)
                 onResult(correct, incorrect)
             }
-        }
-    }
-
-    /**
-     * 학습률 업데이트
-     * @param correct 맞춘 문제 개수
-     * @param total 총 문제 개수
-     */
-    fun updateLearningRate(correct: Int, total: Int) {
-        if (total > 0) {
-            learningRate.value = (correct / total.toFloat() * 100).toInt()
         }
     }
 
