@@ -31,8 +31,9 @@ class SharedViewModel(
     private val questionHistory = mutableListOf<String>()
 
     // 사용자 ID (Firebase Authentication 연동 시 실제 ID로 대체 필요)
-    private val userId: String
-        get() = FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
+    private val userId = "currentUserId"
+    //private val userId: String
+        //get() = FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
 
     // GenerativeModel 초기화
     private val generativeModel = GenerativeModel(
@@ -100,7 +101,10 @@ class SharedViewModel(
                 if (question == "문제") {
                     val problems = parseProblemsWithAnswers(response.text ?: "") // Null-safe 처리
                     withContext(Dispatchers.Main) {
-                        onResponse("문제가 생성되었습니다: ${problems.size}개 생성")
+                        val problemsText = problems.joinToString("\n") { (question, answer) ->
+                            "\n문제: $question"
+                        }
+                        onResponse("문제가 생성되었습니다: ${problems.size}개 생성$problemsText")
                     }
                 } else {
                     withContext(Dispatchers.Main) {
