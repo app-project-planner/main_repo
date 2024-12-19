@@ -1,5 +1,6 @@
 package com.example.mobile_pj.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,6 +11,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONException
 
 class SharedViewModel(
     private val repository: PlanRepository = PlanRepository()
@@ -89,10 +92,11 @@ class SharedViewModel(
                 } else {
                     buildPrompt(question)
                 }
-
+                Log.d("SharedViewModel", "Generated problem prompt: $prompt")
                 // GenerativeModel을 사용하여 응답 받기
                 val response = generativeModel.generateContent(prompt)
-
+                Log.d("SharedViewModel", "AI response: ${response.text}") // AI 응답 로그 출력
+                println("AI 응답 내용: ${response.text}")
                 if (question == "문제") {
                     val problems = parseProblemsWithAnswers(response.text ?: "") // Null-safe 처리
                     withContext(Dispatchers.Main) {
@@ -124,6 +128,7 @@ class SharedViewModel(
 
                 // GenerativeModel을 사용하여 문제 생성
                 val response = generativeModel.generateContent(prompt)
+
 
                 // Null-safe 처리 적용
                 val problems = parseProblemsWithAnswers(response.text ?: "")
@@ -238,7 +243,36 @@ class SharedViewModel(
      * @return 문제와 정답 리스트
      */
     private fun parseProblemsWithAnswers(json: String): List<Pair<String, String>> {
-        // 간단한 JSON 파싱 로직 (생략 가능)
-        return listOf() // JSON 파싱 로직 구현 필요
+        val problems = mutableListOf<Pair<String, String>>()
+
+        try {
+            // 불필요한 텍스트 제거: "```json" 또는 "```"와 같은 구문 제거
+            val cleanedJson = json
+                .replace("```json", "") // "```json" 제거
+                .replace("```", "") // 남아있는 "```" 제거
+                .trim() // 공백 제거
+
+            Log.d("SharedViewModel", "Cleaned JSON: $cleanedJson") // 전처리된 JSON 확인
+
+            // JSON 배열로 변환
+            val jsonArray = JSONArray(cleanedJson)
+
+            // JSON 배열에서 문제와 정답 추출
+            for (i in 0 until jsonArray.length()) {
+                val jsonObject = jsonArray.getJSONObject(i)
+                val question = jsonObject.getString("question")
+                val additionalInfo = """
+                [Type: ${jsonObject.optString("type", "unknown")}, 
+                 Difficulty: ${jsonObject.optString("difficulty", "unknown")}]
+            """.trimIndent()
+                problems.add(question to additionalInfo)
+            }
+
+            Log.d("SharedViewModel", "Parsed problems: $problems")
+        } catch (e: JSONException) {
+            Log.e("SharedViewModel", "JSON parsing error: ${e.message}", e)
+        }
+
+        return problems
     }
 }
