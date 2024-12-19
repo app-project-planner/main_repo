@@ -47,13 +47,6 @@ fun StatisticsPage(viewModel: SharedViewModel) {
                     .padding(vertical = 16.dp),
                 horizontalArrangement = Arrangement.SpaceAround
             ) {
-                // 성취도 그래프
-                CircularProgress(
-                    label = "Achievement",
-                    rate = achievementRate,
-                    color = Color(0xFF4A90E2)
-                )
-
                 // 학습률 그래프
                 CircularProgress(
                     label = "Learning",

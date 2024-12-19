@@ -33,6 +33,12 @@ fun DashboardScreen(
     navController: NavHostController // NavController 추가
 ) {
     var newGoal by remember { mutableStateOf("") } // 입력 필드 상태 관리
+    val isLoading = remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        viewModel.loadGoals()
+        isLoading.value = false
+    }
 
     Column(
         modifier = Modifier
