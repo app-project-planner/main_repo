@@ -151,35 +151,54 @@ class SharedViewModel(
             var incorrect = 0
 
             try {
+                Log.d("checkAnswers", "Starting to check answers")
+                Log.d("checkAnswers", "User Answers: $userAnswers")
+                Log.d("checkAnswers", "Problems: $problems")
+
                 for ((index, userAnswer) in userAnswers.withIndex()) {
                     val problem = problems.getOrNull(index)
                     if (problem != null) {
                         val (question, answer) = problem
 
                         val prompt = """
-                    ## 문제:
-                    $question
+                            ## 문제:
+                            $question
 
-                    ## 사용자의 답변:
-                    $userAnswer
+                            ## 사용자의 답변:
+                            $userAnswer
 
-                    ## 정답:
-                    $answer
+                            ## 정답:
+                            $answer
 
-                    ## 위 정보를 기반으로 사용자의 답변이 정답인지 확인하고 "맞음" 또는 "틀림"으로 응답해줘.
-                """.trimIndent()
+                            ## 위 정보를 기반으로 사용자의 답변이 정답인지 확인하고 "맞음" 또는 "틀림"으로 응답해줘.
+                        """.trimIndent()
+
+                        Log.d("checkAnswers", "Generated Prompt for Question $index: $prompt")
 
                         val response = generativeModel.generateContent(prompt)
                         val result = response.text?.trim() ?: ""
 
-                        if (result == "맞음") correct++ else incorrect++
+                        Log.d("checkAnswers", "Response for Question $index: $result")
+
+                        if (result == "맞음") {
+                            correct++
+                            Log.d("checkAnswers", "Answer $index is correct")
+                        } else {
+                            incorrect++
+                            Log.d("checkAnswers", "Answer $index is incorrect")
+                        }
+                    } else {
+                        Log.d("checkAnswers", "No problem found for index $index")
+                        incorrect++
                     }
                 }
             } catch (e: Exception) {
+                Log.e("checkAnswers", "Error during answer checking: ${e.message}", e)
                 incorrect += userAnswers.size - correct
             }
 
-            // 학습률 업데이트
+            Log.d("checkAnswers", "Final Results: Correct = $correct, Incorrect = $incorrect")
+
             withContext(Dispatchers.Main) {
                 onResult(correct, incorrect)
             }
