@@ -12,6 +12,7 @@ import okhttp3.*
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import java.io.IOException
+import com.google.firebase.auth.FirebaseAuth
 
 /**
  * ViewModel: UI와 Repository(Firebase) 간의 데이터 처리 및 상태 관리를 담당
@@ -30,7 +31,8 @@ class SharedViewModel(
     val learningRate = mutableStateOf(0)
 
     // 사용자 ID (Firebase Authentication 연동 시 실제 ID로 대체 필요)
-    private val userId = "currentUserId" // TODO: Firebase Auth에서 실제 사용자 ID 가져오기
+    private val userId: String
+        get() = FirebaseAuth.getInstance().currentUser?.uid ?: "defaultUserId"
 
     // 질문 내역을 저장할 리스트
     private val questionHistory = mutableListOf<String>()
@@ -78,18 +80,50 @@ class SharedViewModel(
     }
 
     /**
-     * Gemeni를 통한 질문 처리 (AI 학습 지원 기능)
+     * 사용자가 질문을 하면, 목표 및 대화 내역을 바탕으로 AI의 응답을 받아옴
      * @param question 사용자 질문 내용
      * @param onResponse API 응답 콜백
      */
     fun askAI(question: String, onResponse: (String) -> Unit) {
         questionHistory.add(question) // 질문 기록 저장
         CoroutineScope(Dispatchers.IO).launch {
-            val prompt = question
             try {
-                val response = generateContent(prompt)
-                withContext(Dispatchers.Main) {
-                    onResponse(response.getOrNull() ?: "응답을 가져올 수 없습니다.")
+                // 질문이 "문제"인지 확인
+                if (question == "문제") {
+                    // 문제 생성 로직 호출
+                    val prompt = """
+                    ## 오늘의 목표:
+                    ${goals.joinToString(", ")}
+
+                    ## 대화 내역:
+                    ${questionHistory.joinToString(", ")}
+                    
+                    ## 위 정보를 기반으로 5개의 문제를 JSON 형태로 만들어줘.
+                    """.trimIndent()
+
+                    val response = generateContent(prompt)
+                    val problems = response.getOrNull()?.let { parseProblemsWithAnswers(it) } ?: emptyList()
+
+                    withContext(Dispatchers.Main) {
+                        onResponse(problems.joinToString("\n"))
+                    }
+                } else {
+                    // 일반적인 질문 처리
+                    val prompt = """
+                    ## 오늘의 목표:
+                    ${goals.joinToString(", ")}
+
+                    ## 대화 내역:
+                    ${questionHistory.joinToString(", ")}
+
+                    ## 사용자 질문:
+                    $question
+                    """.trimIndent()
+
+                    val response = generateContent(prompt)
+                    withContext(Dispatchers.Main) {
+                        onResponse(response.getOrNull() ?: "응답을 가져올 수 없습니다.")
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -100,81 +134,89 @@ class SharedViewModel(
     }
 
     /**
-     * Gemeni를 통한 문제 생성 처리
-     * @param request 문제 생성 요청 내용
-     * @param onGenerated 문제 리스트 콜백
+     * 문제와 정답을 포함한 JSON 파싱
+     * @param json Gemini 응답 JSON
+     * @return 문제와 정답 리스트
      */
-    fun generateProblems(request: String, onGenerated: (List<String>) -> Unit) {
-        if (request != "문제") {
-            onGenerated(emptyList())
-            return
+    private fun parseProblemsWithAnswers(json: String): List<Pair<String, String>> {
+        return try {
+            val responseMap: Map<String, List<Map<String, String>>> = gson.fromJson(json, Map::class.java) as Map<String, List<Map<String, String>>>
+            responseMap["problems"]?.map {
+                val question = it["question"] ?: throw IllegalArgumentException("Question is missing")
+                val answer = it["answer"] ?: throw IllegalArgumentException("Answer is missing")
+                question to answer
+            } ?: emptyList()
+        } catch (e: JsonSyntaxException) {
+            emptyList()
+        } catch (e: IllegalArgumentException) {
+            // 예외 처리 로직
+            emptyList()
         }
+    }
 
-        // 목표 데이터를 로드하고 처리
-        loadGoals()
-
+    /**
+     * 문제 풀이 후 사용자가 제공한 답변을 AI에 전달하고, 정답 여부 확인
+     * @param userAnswers 사용자가 입력한 답변 리스트
+     * @param problems 문제와 정답 리스트
+     * @param onResult 정답/틀린 개수를 반환하는 콜백
+     */
+    fun checkAnswers(
+        userAnswers: List<String>, // 사용자가 입력한 답변 리스트
+        problems: List<Pair<String, String>>, // 문제와 정답 쌍
+        onResult: (correct: Int, incorrect: Int) -> Unit
+    ) {
         CoroutineScope(Dispatchers.IO).launch {
+            var correct = 0
+            var incorrect = 0
+
             try {
-                // goals 리스트를 사용하여 프롬프트 생성
-                val prompt = """
-                ## 오늘의 목표:
-                ${goals.joinToString()}
+                for ((index, userAnswer) in userAnswers.withIndex()) {
+                    val problem = problems.getOrNull(index)
+                    if (problem != null) {
+                        val (question, answer) = problem
 
-                ## 질문 내역:
-                ${questionHistory.joinToString()} 
+                        // AI에게 문제와 사용자의 답변 전달
+                        val prompt = """
+                        ## 문제:
+                        $question
 
-                ## 위 정보를 기반으로 5개의 문제를 JSON 형태로 생성해줘.
-            """.trimIndent()
+                        ## 사용자의 답변:
+                        $userAnswer
 
-                // Gemini API 호출 및 문제 생성
-                val response = generateContent(prompt)
-                val problems = response.getOrNull()?.let { parseProblems(it) } ?: emptyList()
+                        ## 정답:
+                        $answer
 
-                withContext(Dispatchers.Main) {
-                    onGenerated(problems)
+                        ## 위 정보를 기반으로 사용자의 답변이 정답인지 확인하고 "맞음" 또는 "틀림"으로 응답해줘.
+                        """.trimIndent()
+
+                        val response = generateContent(prompt)
+                        val result = response.getOrNull()?.trim() ?: ""
+
+                        // 정답 여부 판단
+                        if (result == "맞음") correct++ else incorrect++
+                    }
                 }
             } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    onGenerated(emptyList())
-                }
+                // 오류 발생 시 틀린 문제로 처리
+                incorrect += userAnswers.size - correct
+            }
+
+            withContext(Dispatchers.Main) {
+                // 학습률 업데이트
+                updateLearningRate(correct, correct + incorrect)
+                onResult(correct, incorrect)
             }
         }
     }
 
-
     /**
      * 학습률 업데이트
-     * @param correctAnswers 맞춘 문제 개수
-     * @param totalQuestions 총 문제 개수
+     * @param correct 맞춘 문제 개수
+     * @param total 총 문제 개수
      */
-    fun updateLearningRate(correctAnswers: Int, totalQuestions: Int) {
-        if (totalQuestions > 0) {
-            learningRate.value = (correctAnswers / totalQuestions.toFloat() * 100).toInt()
-        }
-    }
-
-    /**
-     * 성취율 업데이트
-     * @param checkedGoals 체크된 목표 개수
-     * @param totalGoals 총 목표 개수
-     */
-    fun updateAchievementRate(checkedGoals: Int, totalGoals: Int) {
-        if (totalGoals > 0) {
-            achievementRate.value = (checkedGoals / totalGoals.toFloat() * 100).toInt()
-        }
-    }
-
-    /**
-     * JSON 응답을 문제 리스트로 변환
-     * @param json Gemini 응답 JSON
-     * @return 문제 리스트
-     */
-    private fun parseProblems(json: String): List<String> {
-        return try {
-            val responseMap: Map<String, List<String>> = gson.fromJson(json, Map::class.java) as Map<String, List<String>>
-            responseMap["problems"] ?: emptyList()
-        } catch (e: JsonSyntaxException) {
-            emptyList()
+    fun updateLearningRate(correct: Int, total: Int) {
+        if (total > 0) {
+            learningRate.value = (correct / total.toFloat() * 100).toInt()
         }
     }
 

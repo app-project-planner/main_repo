@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "257967150421",
-    "project_id": "looplearn-7b87b",
-    "storage_bucket": "looplearn-7b87b.firebasestorage.app"
+    "project_number": "41526653885",
+    "project_id": "kangin0221",
+    "storage_bucket": "kangin0221.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:257967150421:android:efe95c5a512ba02ef0cbdc",
+        "mobilesdk_app_id": "1:41526653885:android:850570fa4b423b7bf5d8d4",
         "android_client_info": {
           "package_name": "com.example.mobile_pj"
         }
       },
       "oauth_client": [
         {
-          "client_id": "257967150421-8eok6mk38pfea5aac065rc236epkp8n7.apps.googleusercontent.com",
+          "client_id": "41526653885-iomk67dhu5k1sfsbmv6aars2fnpm9a6u.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.mobile_pj",
-            "certificate_hash": "5e9fd9507c86ff2c5cbfca0befa606b8566a715e"
+            "certificate_hash": "66fe45d38ccf82cddef41fc766cf1969bd6b12cb"
           }
         },
         {
-          "client_id": "257967150421-imr7102uk5fga2dtd8jcsosem0dodpf3.apps.googleusercontent.com",
+          "client_id": "41526653885-49rsllm920icj51bo918ggfb7a4mh75p.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBYE1b1kjlCpYuJ1pXMqfe0IEF1q0dQPRY"
+          "current_key": "AIzaSyBO4Ybe7gCnMx73RW4xK8mP6HQ_j7-32mQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "257967150421-imr7102uk5fga2dtd8jcsosem0dodpf3.apps.googleusercontent.com",
+              "client_id": "41526653885-49rsllm920icj51bo918ggfb7a4mh75p.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
