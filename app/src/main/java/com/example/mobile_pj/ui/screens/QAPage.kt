@@ -62,7 +62,7 @@ fun QAPage(viewModel: SharedViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.Start
+                            horizontalArrangement = Arrangement.End
                         ) {
                             Text(
                                 text = "Q: $question",
@@ -79,7 +79,7 @@ fun QAPage(viewModel: SharedViewModel) {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 4.dp),
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.Start
                         ) {
                             Text(
                                 text = "A: $answer",

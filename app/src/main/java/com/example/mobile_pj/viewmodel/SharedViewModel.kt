@@ -112,7 +112,7 @@ class SharedViewModel(
                         onResponse(resultMessage)
                         isAwaitingAnswer = false
                     }
-                } else if (question == "문제") {
+                } else if (question == "문제" || question == "problem") {
                     Log.d("SharedViewModel", "Generating problems for question: $question")
                     val prompt = buildProblemPrompt()
                     val response = withContext(Dispatchers.IO) {

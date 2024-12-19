@@ -22,6 +22,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.example.mobile_pj.navigation.Routes
 import com.example.mobile_pj.viewmodel.SharedViewModel
+import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.firebase.auth.FirebaseAuth
 
 @Composable
@@ -35,6 +36,8 @@ fun DashboardScreen(
     var newGoal by remember { mutableStateOf("") } // 입력 필드 상태 관리
     val isLoading = remember { mutableStateOf(true) }
 
+    val account = GoogleSignIn.getLastSignedInAccount(LocalContext.current)
+    val userName = "${account?.familyName}${account?.givenName}"
     LaunchedEffect(Unit) {
         viewModel.loadGoals()
         isLoading.value = false
@@ -78,7 +81,7 @@ fun DashboardScreen(
         }
 
         // 사용자 정보 카드
-        UserInfoCard()
+        UserInfoCard(userName)
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -106,7 +109,7 @@ fun DashboardScreen(
 }
 
 @Composable
-fun UserInfoCard() {
+fun UserInfoCard(userName: String) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,14 +120,14 @@ fun UserInfoCard() {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = "Welcome: User",
+                text = "Welcome: $userName",
                 style = MaterialTheme.typography.displayMedium,
                 color = Color(0xFF6BAE75)
             )
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Attendance: 12 days",
+                text = "한 걸음씩 꾸준히, 꿈에 가까워질 거예요. 오늘도 힘내세요!",
                 style = MaterialTheme.typography.displayMedium,
                 color = Color.Gray
             )
